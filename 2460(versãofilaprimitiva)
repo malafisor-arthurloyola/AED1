@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Estrutura de nó da fila
+typedef struct Node {
+    int valor;
+    struct Node* prox;
+} Node;
+
+// Estrutura da fila
+typedef struct {
+    Node* inicio;
+    Node* fim;
+} Fila;
+
+// Função para inicializar a fila
+void inicializar(Fila* f) {
+    f->inicio = NULL;
+    f->fim = NULL;
+}
+
+// Enfileirar (inserir no final)
+void enfileirar(Fila* f, int valor) {
+    Node* novo = (Node*)malloc(sizeof(Node));
+    novo->valor = valor;
+    novo->prox = NULL;
+    if (f->fim != NULL) {
+        f->fim->prox = novo;
+    } else {
+        f->inicio = novo;
+    }
+    f->fim = novo;
+}
+
+// Verifica se a pessoa saiu
+int saiu(int x, int* sairam, int m) {
+    for (int i = 0; i < m; i++) {
+        if (sairam[i] == x) return 1;
+    }
+    return 0;
+}
+
+// Imprime os que ficaram
+void imprimirFila(Fila* f, int* sairam, int m) {
+    Node* atual = f->inicio;
+    int primeiro = 1;
+    while (atual != NULL) {
+        if (!saiu(atual->valor, sairam, m)) {
+            if (!primeiro) printf(" ");
+            printf("%d", atual->valor);
+            primeiro = 0;
+        }
+        atual = atual->prox;
+    }
+    printf("\n");
+}
+
+// Libera a memória da fila
+void liberar(Fila* f) {
+    Node* atual = f->inicio;
+    while (atual != NULL) {
+        Node* temp = atual;
+        atual = atual->prox;
+        free(temp);
+    }
+}
+
+int main() {
+    int N, M;
+    Fila fila;
+    inicializar(&fila);
+
+    scanf("%d", &N);
+    for (int i = 0; i < N; i++) {
+        int valor;
+        scanf("%d", &valor);
+        enfileirar(&fila, valor);
+    }
+
+    scanf("%d", &M);
+    int sairam[M];
+    for (int i = 0; i < M; i++) {
+        scanf("%d", &sairam[i]);
+    }
+
+    imprimirFila(&fila, sairam, M);
+    liberar(&fila);
+    return 0;
+}
